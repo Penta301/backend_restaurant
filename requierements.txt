@@ -1,0 +1,6 @@
+fastapi
+motor
+uvicorn
+datetime
+typing==3.7.4.3
+mercadopago

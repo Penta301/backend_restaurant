@@ -1,0 +1,32 @@
+[[source]]
+url = "https://pypi.python.org/simple"
+verify_ssl = true
+name = "pypi"
+
+[packages]
+fastapi = "*"
+motor = "*"
+uvicorn = "*"
+DateTime = "*"
+typing = "==3.7.4.3"
+python-binance = "*"
+beautifulsoup4 = "*"
+requests = "*"
+bcrypt = "*"
+python-multipart = "*"
+multipart = "*"
+fastapi-jwt-auth = "*"
+mercadopago = "*"
+fastapi-auth0 = "*"
+fastapi-socketio = "*"
+
+[dev-packages]
+
+[requires]
+python_version = "3.8"
+
+[packages.python-jose]
+extras = [ "cryptography",]
+
+[packages.passlib]
+extras = [ "bcrypt",]
