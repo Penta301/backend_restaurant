@@ -19,6 +19,7 @@ fastapi-jwt-auth = "*"
 mercadopago = "*"
 fastapi-auth0 = "*"
 fastapi-socketio = "*"
+cloudinary = "*"
 
 [dev-packages]
 

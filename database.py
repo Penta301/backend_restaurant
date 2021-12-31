@@ -4,7 +4,7 @@ import random
 
 client = motor.motor_asyncio.AsyncIOMotorClient('mongodb://localhost:27017/')
 database = client.Restaurant
-collection_service = database.service
+collection_payed_service = database.payed_service
 collection_restaurant = database.restaurant
 collection_food = database.restaurant_food 
 collection_order = database.order
@@ -30,40 +30,28 @@ async def fetch_all(collection, model, filter_model = False, exclude = True):
         operations.append(document)
     return operations
 
-
-async def fetch_one(collection, filter_model):
+async def fetch_one(collection, filter_model, model=False):
     cursor = await collection.find_one(filter_model)
+    if model:
+        if cursor:
+            return model(**cursor) 
     return cursor 
 
-async def create_operation(model, collection, where = '', specific = '',  verify = False):
+async def create_operation(model, collection):
     document = model
-
-# Check if the user exits 
-
-    try:    
-        if verify:
-            repeat = await collection.find_one({where:document[specific]})
-            if repeat:
-                random_number = random.randint(0, 22)
-                document[where] = document[where] + f'_{random_number}'
-
-    except AssertionError as error:
-        print(error)
-
     await collection.insert_one(document)
     return document
 
-async def update_operation(collection, name, model, where):
-    document = model
-    result = await collection.update_one({where:name},
-    {"$set":document}) 
+async def update_operation(collection, model={}, filter_model=False):
+    result = await collection.update_one(filter_model, {"$set":model})
     return result.matched_count
 
-async def remove_operation(collection, name='', where='', remove_model = False):
-    if remove_model:
-        result = await collection.delete_one(remove_model)
-        return result.deleted_count
-    result = await collection.delete_one({where:name})
+async def update_many_operation(collection, model, filter_model):
+    result = await collection.update_many(filter_model, model)
+    return result.matched_count
+
+async def remove_operation(collection, remove_model = False):
+    result = await collection.delete_one(remove_model)
     return result.deleted_count
 
 async def replace_operation(collection, find_model, replace_model):

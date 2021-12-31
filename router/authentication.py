@@ -1,10 +1,9 @@
 import sys
-sys.path.append('..')
-from backend.model import Restaurant
+from model import Restaurant, Payed_service
 from fastapi import APIRouter
-from backend.database import (
+from database import (
     collection_restaurant, 
-    collection_service,
+    collection_payed_service,
     fetch_one
 )
 
@@ -16,15 +15,14 @@ router = APIRouter(
 
 @router.post('/verify_restaurant/{owner}')
 async def verify_restaurant(owner:str):
-    authentication_restaurant = await fetch_one(collection_restaurant, {'owner':owner})
+    authentication_restaurant = await fetch_one(collection_restaurant, {'owner':owner}, model=Restaurant)
+    authentication_service = await fetch_one(collection_payed_service, {'owner':owner}, model=Payed_service)
 
-    if authentication_restaurant:
-        authentication_restaurant.pop('_id')
-    
-        Restaurant(**authentication_restaurant)
+    if authentication_restaurant or authentication_service:
+        if not authentication_service.verified:
+            pass
 
-        response = {'service':{'title':'plan1'}, 'restaurant':authentication_restaurant}
-
+        response = {'service':authentication_service, 'restaurant':authentication_restaurant}
         return response
 
     response = {'service':False, 'restaurant':False}
